@@ -1,0 +1,31 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>CLIENTS ACTIUS</title>
+</head>
+<body>
+<table>
+    <tr>
+        <td>Codi</td>
+        <td>Nom Comercial</td>
+        <td>CIF</td>
+        <td>Població</td>
+        <td>Tel</td>
+    </tr>
+    {% for client in clientsActius %}
+        <tr>
+            <td>{{ client.codi_client }}</td>
+            <td>{{ client.nom_comercial }}</td>
+            <td>{{ client.cif }}</td>
+            <td>{{ client.poblacio }}</td>
+            <td>{{ client.telefon }}</td>
+            <td><a href="/clients/{{ client.id }}">Veure detalls</a></td>
+        </tr>
+    {% empty %}
+        <p>No hi ha clients actius</p>
+    {% endfor %}
+</table>
+<button>Nou client</button>
+</body>
+</html>

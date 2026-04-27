@@ -1,0 +1,33 @@
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
+    <title>Detalls de client</title>
+</head>
+<body>
+    <p>Client {{ client.codi_client }}</p>
+    <br />
+    <p>Nom comercial: {{ client.nom_comercial }}</p>
+    <p>CIF: {{ client.cif }}</p>
+    <p>Persona contacte: {{ client.persona_contacte }}</p>
+    <p>Telèfon: {{ client.telefon }}</p>
+    <p>Email: {{ client.email }}</p>
+    <p>Adreça entrega: {{ client.adreca_entrega }}</p>
+    <p>Població: {{ client.poblacio }}</p>
+    <p>Codi postal: {{ client.codi_postal }}</p>
+    <p>Actiu: {{ client.actiu }}</p>
+    <br />
+    <h2>Albarans de {{ client.nom_comercial }}</h2>
+    <ol>
+        {% for albara in client.albarans.all %}
+        <li>
+            <p>{{ albara.numero_albara }}, {{ albara.data_creacio }}, {{ albara.estat }}, {{ albara.total }}</p>
+        </li>
+        {% empty %}
+            <p>No conté cap albarà</p>
+        {% endfor %}
+    </ol>
+    <br />
+    <a href="/clients/{{ client.id }}/editar/"><button>Editar client</button></a> <br />
+    <a href="/clients/">Tornar</a>
+</body>
+</html>

@@ -1,0 +1,48 @@
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
+    <title>Editar Client</title>
+</head>
+<body>
+<form action="{% url 'editarClient' client.id %}" method="post">
+    {% csrf_token %}
+        <fieldset>
+            <legend>Editar Client</legend>
+
+            <label>Codi client:</label>
+            <input type="text" value="{{ client.codi_client }}" name="codi_client"><br />
+
+            <label>Nom comercial:</label>
+            <input type="text" value="{{ client.nom_comercial }}" name="nom_comercial"><br />
+
+            <label>CIF:</label>
+            <input type="text" value="{{ client.cif }}" name="cif">
+
+            <label>Persona contacte:</label>
+            <input type="text" value="{{ client.persona_contacte }}" name="persona_contacte"><br />
+
+            <label>Telèfon:</label>
+            <input type="number" value="{{ client.telefon }}" name="telefon"><br />
+
+            <label>Email:</label>
+            <input type="email" value="{{ client.email }}" name="email"><br />
+
+            <label>Adreça entrega:</label>
+            <input type="text" value="{{ client.adreca_entrega }}" name="adreca_entrega"><br />
+
+            <label>Població:</label>
+            <input type="text" value="{{ client.poblacio }}" name="poblacio"><br />
+
+            <label>Codi postal:</label>
+            <input type="number" value="{{ client.codi_postal }}" name="codi_postal"><br />
+
+            <label>Actiu:</label>
+            <input type="checkbox" name="actiu" {% if client.actiu %}checked{% endif %}>
+        </fieldset>
+
+        <input type="submit" value="Guardar canvis">
+    </form>
+
+    <a href="/clients/{{ client.id }}/"><button>Cancel·lar</button></a>
+</body>
+</html>

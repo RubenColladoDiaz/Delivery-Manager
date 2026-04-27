@@ -1,0 +1,31 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>ALBARANS</title>
+</head>
+<body>
+<table>
+    <tr>
+        <td>Número</td>
+        <td>Client</td>
+        <td>Data creació</td>
+        <td>Estat</td>
+        <td>Total</td>
+    </tr>
+    {% for albara in albarans %}
+        <tr>
+            <td>{{ albara.numero_albara }}</td>
+            <td>{{ albara.client.nom_comercial }}</td>
+            <td>{{ albara.data_creacio }}</td>
+            <td>{{ albara.estat }}</td>
+            <td>{{ albara.total }}</td>
+            <td><a href="/albarans/{{ albara.id }}">Veure detalls</a></td>
+        </tr>
+    {% empty %}
+        <p>No hi ha albarans</p>
+    {% endfor %}
+</table>
+<button>Nou albarà</button>
+</body>
+</html>
