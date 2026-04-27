@@ -21,8 +21,10 @@ from Projecte import views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('', views.LlistatClients.as_view(), name='home'),
     path('clients/', views.LlistatClients.as_view(), name='llistatClients'),
     path('clients/<int:id>/', views.DetallsClient.as_view(), name='detallsClient'),
     path('clients/<int:id>/editar/', views.EditarClient.as_view(), name='editarClient'),
     path('albarans/', views.LlistatAlbarans.as_view(), name='llistatAlbarans'),
+    path('albarans/<int:id>/', views.DetallsAlbara.as_view(), name='detallsAlbara')
 ]

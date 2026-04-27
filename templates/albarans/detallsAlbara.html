@@ -1,0 +1,47 @@
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
+    <title>Detalls de albara</title>
+</head>
+<body>
+    <p>Albara {{ albara.numero_albara }}</p>
+    <br />
+    <p>Client: {{ albara.client.nom_comercial }}</p>
+    <p>Data creació: {{ albara.data_creacio }}</p>
+    <p>Data d'entrega prevista: {{ albara.data_entrega_prevista }}</p>
+    <p>Estat: {{ albara.estat }}</p>
+    <br />
+    <h2>Linies d'Albarà</h2>
+    <table>
+        <tr>
+            <td>Nom Producte</td>
+            <td>Quantitat</td>
+            <td>Preu Unitari</td>
+            <td>Subtotal</td>
+            <td>Notes</td>
+        </tr>
+        {% for liniaAlbara in albara.linies_albara.all %}
+            <tr>
+                <td>{{ liniaAlbara.nom_producte }}</td>
+                <td>{{ liniaAlbara.quantitat }}</td>
+                <td>{{ liniaAlbara.preu_unitari }}</td>
+                <td>{{ liniaAlbara.subtotal }}</td>
+                <td>{{ liniaAlbara.notes }}</td>
+            </tr>
+        {% empty %}
+            <p>No hi ha linies d'albarà</p>
+        {% endfor %}
+    </table>
+    <p>Suma de subtotals: {{ totalSubtotals }}</p>
+    {% if afegirLinea %}
+        <button>Afegir línia</button>
+        <br />
+    {% endif %}
+    <br />
+    <button>Canviar estat</button>
+    <button>Imprimir albarà</button>
+    <br />
+    <br />
+    <a href="/albarans/">Tornar</a>
+</body>
+</html>

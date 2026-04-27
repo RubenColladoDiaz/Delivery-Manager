@@ -33,6 +33,8 @@ class Albara(models.Model):
     estat = models.CharField(max_length=200, choices=ESTAT)
     total = models.DecimalField(max_digits=5, decimal_places=2) # OJO DECIMALES SIEMPRE PIDE ESTOS ATRIBUTOS
     observacions = models.TextField(blank=True, null=False) # Se guarda como ''. Si ambos fueran True se guardaria como NULL
+    def __str__(self):
+        return self.numero_albara
 
 class LineaAlbara(models.Model):
     albara = ForeignKey('Albara', on_delete=models.CASCADE, related_name='linies_albara')
@@ -41,3 +43,5 @@ class LineaAlbara(models.Model):
     preu_unitari = models.DecimalField(max_digits=5, decimal_places=2)
     subtotal = models.DecimalField(max_digits=5, decimal_places=2)
     notes = models.CharField(blank=True, null=False)
+    def __str__(self):
+        return self.nom_producte

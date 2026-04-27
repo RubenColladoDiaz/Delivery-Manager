@@ -1,3 +1,5 @@
+from django.utils import timezone
+
 from django.shortcuts import render, redirect
 from django.views import View
 
@@ -45,3 +47,38 @@ class LlistatAlbarans(View):
     def get(self, request, *args, **kwargs):
         albarans = Albara.objects.all()
         return render(request, 'albarans/mostrarAlbarans.html', {'albarans': albarans})
+
+class DetallsAlbara(View):
+    def get(self, request, *args, **kwargs):
+        idURL = self.kwargs['id']
+        albara = Albara.objects.get(pk=idURL)
+
+        totalSubtotals = 0
+        for liniaAlbara in albara.linies_albara.all():
+            totalSubtotals += liniaAlbara.subtotal
+
+        afegirLinea = albara.estat == 'PENDENT' or albara.estat == 'EN_PREPARACIO'
+        return render(request, 'albarans/detallsAlbara.html', {'albara': albara, 'totalSubtotals': totalSubtotals, 'afegirLinea': afegirLinea})
+
+class CrearAlbara(View):
+    def get(self, request, *args, **kwargs):
+        clients = Client.objects.all()
+        return render(request, 'albarans/crearAlbara.html', {'clients': clients})
+
+    def post(self, request, *args, **kwargs):
+        numero_albara = request.POST['numero_albara']
+        data_entrega_prevista = request.POST['data_entrega_prevista']
+        observacions = request.POST['observacions']
+        client = request.POST['client']
+
+        nouAlbara = Albara(
+            numero_albara=numero_albara,
+            client=client,
+            data_creacio=timezone.now(),
+            data_entrega_prevista=data_entrega_prevista,
+            estat='PENDENT',
+            total=0,
+            observacions=observacions
+        )
+        nouAlbara.save()
+        return redirect('detallsAlbara', id=nouAlbara.id)
