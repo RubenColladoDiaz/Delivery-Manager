@@ -26,5 +26,7 @@ urlpatterns = [
     path('clients/<int:id>/', views.DetallsClient.as_view(), name='detallsClient'),
     path('clients/<int:id>/editar/', views.EditarClient.as_view(), name='editarClient'),
     path('albarans/', views.LlistatAlbarans.as_view(), name='llistatAlbarans'),
-    path('albarans/<int:id>/', views.DetallsAlbara.as_view(), name='detallsAlbara')
+    path('albarans/<int:id>/', views.DetallsAlbara.as_view(), name='detallsAlbara'),
+    path('albarans/nova/', views.CrearAlbara.as_view(), name='crearAlbara'),
+    path('albarans/<int:id>/afegir-linia/', views.AfegirLinia.as_view(), name='afegirLinia')
 ]

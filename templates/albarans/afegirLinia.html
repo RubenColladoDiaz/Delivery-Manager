@@ -1,0 +1,29 @@
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
+    <title>Afegir Linia Albarà</title>
+</head>
+<body>
+    <form action="{% url 'afegirLinia' albara.id %}" method="post">
+        {% csrf_token %}
+
+        <fieldset>
+            <legend>Afegir linia a albarà num.{{ albara.numero_albara }}</legend>
+
+            <label>Nom producte:</label>
+            <input type="text" name="nom_producte">
+
+            <label>Quantitat:</label>
+            <input type="number" name="quantitat">
+
+            <label>Preu unitari:</label>
+            <input type="number" name="preu_unitari">
+
+            <label>Notes:</label>
+            <input type="text" name="notes">
+        </fieldset>
+
+        <input type="submit" value="Afegir">
+    </form>
+</body>
+</html>

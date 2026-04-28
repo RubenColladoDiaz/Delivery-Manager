@@ -4,6 +4,29 @@
     <title>Crear Albarà</title>
 </head>
 <body>
+    <form action="{% url 'crearAlbara' %}" method="post">
+        {% csrf_token %}
 
+        <fieldset>
+            <legend>Crear nou albarà</legend>
+
+            <select name="client">
+                {% for client in clients %}
+                    <option value="{{ client.id }}">{{ client.nom_comercial }}</option>
+                {% endfor %}
+            </select>
+
+            <label>Número Albarà:</label>
+            <input type="text" name="numero_albara">
+
+            <label>Data d'entrega prevista:</label>
+            <input type="date" name="data_entrega_prevista">
+
+            <label>Observacions:</label>
+            <textarea name="observacions" cols="30" rows="10"></textarea>
+        </fieldset>
+
+        <input type="submit" value="Enviar">
+    </form>
 </body>
 </html>

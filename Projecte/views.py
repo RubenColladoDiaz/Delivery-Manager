@@ -1,9 +1,11 @@
+from decimal import Decimal
+
 from django.utils import timezone
 
 from django.shortcuts import render, redirect
 from django.views import View
 
-from Projecte.models import Client, Albara
+from Projecte.models import Client, Albara, LineaAlbara
 
 
 # Create your views here.
@@ -69,7 +71,9 @@ class CrearAlbara(View):
         numero_albara = request.POST['numero_albara']
         data_entrega_prevista = request.POST['data_entrega_prevista']
         observacions = request.POST['observacions']
-        client = request.POST['client']
+        client_id = request.POST['client']
+
+        client = Client.objects.get(id=client_id)
 
         nouAlbara = Albara(
             numero_albara=numero_albara,
@@ -82,3 +86,34 @@ class CrearAlbara(View):
         )
         nouAlbara.save()
         return redirect('detallsAlbara', id=nouAlbara.id)
+
+class AfegirLinia(View):
+    def get(self, request, *args, **kwargs):
+        idURL = self.kwargs['id']
+        albara = Albara.objects.get(id=idURL)
+        return render(request, 'albarans/afegirLinia.html', {'albara': albara})
+
+    def post(self, request, *args, **kwargs):
+        idURL = self.kwargs['id']
+        albara = Albara.objects.get(id=idURL)
+
+        nom_producte = request.POST['nom_producte']
+        quantitat = int(request.POST['quantitat'])
+        preu_unitari = Decimal(request.POST['preu_unitari'])
+        notes = request.POST['notes']
+
+        subtotal = quantitat * preu_unitari
+
+        novaLinia = LineaAlbara(
+            albara=albara,
+            nom_producte=nom_producte,
+            quantitat=quantitat,
+            preu_unitari=preu_unitari,
+            subtotal=subtotal,
+            notes=notes
+        )
+        novaLinia.save()
+
+        albara.total += subtotal
+        albara.save()
+        return redirect('detallsAlbara', id=albara.id)
