@@ -32,13 +32,13 @@
             <p>No hi ha linies d'albarà</p>
         {% endfor %}
     </table>
-    <p>Suma de subtotals: {{ totalSubtotals }}</p>
+    <p>Suma de subtotals: {{ albara.total }}</p>
     {% if afegirLinea %}
         <a href="/albarans/{{ albara.id }}/afegir-linia/"><button>Afegir línia</button></a>
         <br />
     {% endif %}
     <br />
-    <button>Canviar estat</button>
+    <a href=""><button>Canviar estat</button></a>
     <button>Imprimir albarà</button>
     <br />
     <br />

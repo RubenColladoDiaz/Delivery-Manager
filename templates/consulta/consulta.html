@@ -1,0 +1,20 @@
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
+    <title>Document</title>
+</head>
+<body>
+    <form action="{% url 'consulta' %}" method="post">
+        {% csrf_token %}
+
+        <fieldset>
+            <legend>Consultar albarà</legend>
+
+            <label>Número Albarà:</label>
+            <input type="text" name="numero_albara">
+        </fieldset>
+
+        <input type="submit" value="Consultar">
+    </form>
+</body>
+</html>

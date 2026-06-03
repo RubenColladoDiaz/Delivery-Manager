@@ -1,0 +1,38 @@
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html;charset=UTF-8" />
+    <title>Document</title>
+  </head>
+  <body>
+    {% if albara %}
+    <table>
+      <tr>
+        <td>Número de albarà</td>
+        <td>Estat</td>
+        <td>Data de creació</td>
+        <td>Data d'entrega prevista</td>
+        <td>Total</td>
+        {% if request.user.is_authenticated %}
+        <td>Client</td>
+        <td>Línies d'albarà</td>
+        {% endif %}
+      </tr>
+      <tr>
+        <td>{{ albara.numero_albara }}</td>
+        <td>{{ albara.estat }}</td>
+        <td>{{ albara.data_creacio }}</td>
+        <td>{{ albara.data_entrega_prevista }}</td>
+        <td>{{ albara.total }}</td>
+        {% if request.user.is_authenticated %}
+        <td>{{ albara.client }}</td>
+        {% for liniaAlbara in liniesAlbara %}
+        <td>{{ liniaAlbara.nom_producte }}</td>
+        {% endfor %} {% endif %}
+      </tr>
+    </table>
+    {% else %}
+    <p>{{ noTrobat }}</p>
+    {% endif %}
+    <a href="/consulta/">Tornar</a>
+  </body>
+</html>

@@ -117,3 +117,34 @@ class AfegirLinia(View):
         albara.total += subtotal
         albara.save()
         return redirect('detallsAlbara', id=albara.id)
+
+class CanviarEstat(View):
+    def get(self, request, *args, **kwargs):
+        idURL = self.kwargs['id']
+        albara = Albara.objects.get(id=idURL)
+
+        nouEstat = self.kwargs['nouEstat']
+        albara.estat = nouEstat
+        albara.save()
+        return redirect('detallsAlbara', id=albara.id)
+
+class Consulta(View):
+    def get(self, request, *args, **kwargs):
+        return render(request, 'consulta/consulta.html')
+
+    def post(self, request, *args, **kwargs):
+        numero_albara = request.POST['numero_albara']
+        return redirect('resultatConsulta', numero_albara=numero_albara)
+
+class ResultatConsulta(View):
+    def get(self, request, *args, **kwargs):
+        numero_albaraURL = self.kwargs['numero_albara']
+
+        albara = Albara.objects.filter(numero_albara=numero_albaraURL).first()
+        if albara:
+            noTrobat = ""
+            liniesAlbara = albara.linies_albara.all()
+        else:
+            noTrobat = "Albarà no trobada"
+            liniesAlbara = []
+        return render(request, 'consulta/resultatConsulta.html', {'albara': albara, 'liniesAlbara': liniesAlbara, 'noTrobat': noTrobat})
