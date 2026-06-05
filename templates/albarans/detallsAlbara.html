@@ -22,7 +22,7 @@
         </tr>
         {% for liniaAlbara in albara.linies_albara.all %}
             <tr>
-                <td>{{ liniaAlbara.nom_producte }}</td>
+                <td>{{ liniaAlbara.producte.nom }}</td>
                 <td>{{ liniaAlbara.quantitat }}</td>
                 <td>{{ liniaAlbara.preu_unitari }}</td>
                 <td>{{ liniaAlbara.subtotal }}</td>

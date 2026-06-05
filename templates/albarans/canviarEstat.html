@@ -1,0 +1,29 @@
+<html>
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
+    <title>Canviar Estat Albarà</title>
+</head>
+
+<body>
+    <form action="{% url 'canviarEstatFormulari' albara.id %}" method="post">
+        {% csrf_token %}
+
+        <fieldset>
+            <legend>Modificar estat a albarà num.{{ albara.numero_albara }}</legend>
+
+            <select name="estatSeleccionat">
+                <option value={{albara.estat}}>{{albara.estat}}</option>
+                {% for valor, texto in estats %}
+                <option value="{{ valor }}">
+                    {{ texto }}
+                </option>
+                {% endfor %}
+            </select>
+        </fieldset>
+
+        <input type="submit" value="Canviar estat">
+    </form>
+</body>
+
+</html>

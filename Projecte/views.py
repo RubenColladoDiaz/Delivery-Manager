@@ -7,7 +7,6 @@ from django.views import View
 
 from Projecte.models import Client, Albara, LineaAlbara, Producte, Categoria
 
-
 # Create your views here.
 class LlistatClients(View):
     def get(self, request, *args, **kwargs):
@@ -63,20 +62,22 @@ class LlistatAlbarans(View):
 
 class DetallsAlbara(View):
     def get(self, request, *args, **kwargs):
-        idURL = self.kwargs['id']
-        albara = Albara.objects.get(pk=idURL)
+        if request.user.is_authenticated:
+            idURL = self.kwargs['id']
+            albara = Albara.objects.get(pk=idURL)
 
-        totalSubtotals = 0
-        for liniaAlbara in albara.linies_albara.all():
-            totalSubtotals += liniaAlbara.subtotal
+            totalSubtotals = 0
+            for liniaAlbara in albara.linies_albara.all():
+                totalSubtotals += liniaAlbara.subtotal
 
-        afegirLinea = albara.estat == 'PENDENT' or albara.estat == 'EN_PREPARACIO'
-        return render(request, 'albarans/detallsAlbara.html', {'albara': albara, 'totalSubtotals': totalSubtotals, 'afegirLinea': afegirLinea})
+            afegirLinea = albara.estat == 'PENDENT'
+            return render(request, 'albarans/detallsAlbara.html', {'albara': albara, 'totalSubtotals': totalSubtotals, 'afegirLinea': afegirLinea})
 
 class CrearAlbara(View):
     def get(self, request, *args, **kwargs):
-        clients = Client.objects.all()
-        return render(request, 'albarans/crearAlbara.html', {'clients': clients})
+        if request.user.is_authenticated:
+            clients = Client.objects.all()
+            return render(request, 'albarans/crearAlbara.html', {'clients': clients})
 
     def post(self, request, *args, **kwargs):
         numero_albara = request.POST['numero_albara']
@@ -104,24 +105,29 @@ class AfegirLinia(View):
     def get(self, request, *args, **kwargs):
         idURL = self.kwargs['id']
         albara = Albara.objects.get(id=idURL)
-        return render(request, 'albarans/afegirLinia.html', {'albara': albara})
+        productes = Producte.objects.all()
+        return render(request, 'albarans/afegirLinia.html', {'albara': albara, 'productes': productes})
 
     def post(self, request, *args, **kwargs):
         idURL = self.kwargs['id']
         albara = Albara.objects.get(id=idURL)
 
-        nom_producte = request.POST['nom_producte']
+        producte_id = request.POST['producteSeleccionat']
+        producte = Producte.objects.get(id=producte_id)
+
         quantitat = int(request.POST['quantitat'])
         preu_unitari = Decimal(request.POST['preu_unitari'])
+        descompte = int(request.POST['descompte'])
         notes = request.POST['notes']
 
         subtotal = quantitat * preu_unitari
 
         novaLinia = LineaAlbara(
             albara=albara,
-            nom_producte=nom_producte,
+            producte=producte,
             quantitat=quantitat,
             preu_unitari=preu_unitari,
+            descompte_percentatge = descompte,
             subtotal=subtotal,
             notes=notes
         )
@@ -140,10 +146,31 @@ class CanviarEstat(View):
         albara.estat = nouEstat
         albara.save()
         return redirect('detallsAlbara', id=albara.id)
+    
+class CanviarEstatFormulari(View):
+    def get(self, request, *args, **kwargs):
+        if request.user.is_authenticated:
+            idAlbara = self.kwargs['id']
+            albara = Albara.objects.get(id=idAlbara)
+            estats = Albara.ESTAT
+            return render(request, 'albarans/canviarEstat.html', {'albara': albara, 'estats': estats})
+        
+    def post(self, request, *args, **kwargs):
+        idAlbara = self.kwargs['id']
+        albara = Albara.objects.get(id=idAlbara)
+
+        nouEstat = request.POST['estatSeleccionat']
+        if not (albara.estat == 'ENVIAT' and nouEstat == 'PENDENT'):
+            albara.estat = nouEstat
+            albara.save()
+            return redirect('detallsAlbara', id=albara.id)
+        else:
+            return redirect('llistatAlbarans')
 
 class Consulta(View):
     def get(self, request, *args, **kwargs):
-        return render(request, 'consulta/consulta.html')
+        if request.user.is_authenticated:
+            return render(request, 'consulta/consulta.html')
 
     def post(self, request, *args, **kwargs):
         numero_albara = request.POST['numero_albara']
@@ -151,13 +178,14 @@ class Consulta(View):
 
 class ResultatConsulta(View):
     def get(self, request, *args, **kwargs):
-        numero_albaraURL = self.kwargs['numero_albara']
+        if request.user.is_authenticated:
+            numero_albaraURL = self.kwargs['numero_albara']
 
-        albara = Albara.objects.filter(numero_albara=numero_albaraURL).first()
-        if albara:
-            noTrobat = ""
-            liniesAlbara = albara.linies_albara.all()
-        else:
-            noTrobat = "Albarà no trobada"
-            liniesAlbara = []
-        return render(request, 'consulta/resultatConsulta.html', {'albara': albara, 'liniesAlbara': liniesAlbara, 'noTrobat': noTrobat})
+            albara = Albara.objects.filter(numero_albara=numero_albaraURL).first()
+            if albara:
+                noTrobat = ""
+                liniesAlbara = albara.linies_albara.all()
+            else:
+                noTrobat = "Albarà no trobada"
+                liniesAlbara = []
+            return render(request, 'consulta/resultatConsulta.html', {'albara': albara, 'liniesAlbara': liniesAlbara, 'noTrobat': noTrobat})

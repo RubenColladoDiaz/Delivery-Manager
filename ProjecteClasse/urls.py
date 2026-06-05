@@ -14,6 +14,7 @@ urlpatterns = [
     path('albarans/nova/', views.CrearAlbara.as_view(), name='crearAlbara'),
     path('albarans/<int:id>/afegir-linia/', views.AfegirLinia.as_view(), name='afegirLinia'),
     path('albarans/<int:id>/estat/<str:nouEstat>/', views.CanviarEstat.as_view(),name='canviarEstat'),
+    path('albara/<int:id>/estat/', views.CanviarEstatFormulari.as_view(), name='canviarEstatFormulari'),
     path('consulta/', views.Consulta.as_view(), name='consulta'),
     path('consulta/<int:numero_albara>', views.ResultatConsulta.as_view(), name='resultatConsulta'),
     path('cataleg/', views.Cataleg.as_view(), name='cataleg'),
