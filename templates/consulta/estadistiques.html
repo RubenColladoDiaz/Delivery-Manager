@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Estadistiques</title>
+</head>
+<body>
+    <h1>Estadistiques</h1>
+
+    <h2>Tots els albarans entregats (amb totals)</h2>
+    <ul>
+        {% for albara in albarans %}
+            <li>{{ albara.numero_albara }} - {{ albara.client.nom_comercial }} - {{ albara.total }}</li>
+        {% empty %}
+            <li>No hi ha albarans entregats.</li>
+        {% endfor %}
+    </ul>
+
+    <h2>Productes mes venuts (ordenats per quantitat)</h2>
+    <ul>
+        {% for producte in productesMesVenuts %}
+            <li>{{ producte.producte__nom }} - {{ producte.quantitat_total }}</li>
+        {% empty %}
+            <li>No hi ha vendes registrades.</li>
+        {% endfor %}
+    </ul>
+
+    <h2>Grafic de vendes per categoria</h2>
+    {{ grafic|safe }}
+
+    <h2>Ranking de clients per volum de compra</h2>
+    <ul>
+        {% for client in rankingClients %}
+            <li>{{ client.client__nom_comercial }} - {{ client.volum_compra }}</li>
+        {% empty %}
+            <li>No hi ha clients amb compres entregades.</li>
+        {% endfor %}
+    </ul>
+</body>
+</html>

@@ -1,11 +1,13 @@
 from decimal import Decimal
 
 from django.utils import timezone
+from django.db.models import Sum
 
 from django.shortcuts import render, redirect
 from django.views import View
+import plotly.graph_objects as go
 
-from Projecte.models import Client, Albara, LineaAlbara, Producte, Categoria
+from Projecte.models import Client, Albara, LineaAlbara, Producte, Categoria, StockMagatzem
 
 # Create your views here.
 class LlistatClients(View):
@@ -122,20 +124,91 @@ class AfegirLinia(View):
 
         subtotal = quantitat * preu_unitari
 
-        novaLinia = LineaAlbara(
-            albara=albara,
-            producte=producte,
-            quantitat=quantitat,
-            preu_unitari=preu_unitari,
-            descompte_percentatge = descompte,
-            subtotal=subtotal,
-            notes=notes
-        )
-        novaLinia.save()
+        stock = StockMagatzem.objects.get(producte=producte, magatzem=albara.magatzem)
 
-        albara.total += subtotal
-        albara.save()
+        if stock and stock.quantitat >= quantitat:
+            novaLinia = LineaAlbara(
+                albara=albara,
+                producte=producte,
+                quantitat=quantitat,
+                preu_unitari=preu_unitari,
+                descompte_percentatge = descompte,
+                subtotal=subtotal,
+                notes=notes
+            )
+            novaLinia.save()
+
+            albara.total += subtotal
+            albara.save()
+
         return redirect('detallsAlbara', id=albara.id)
+
+class Estadistiques(View):
+    def get(self, request, *args, **kwargs):
+        albarans = Albara.objects.filter(estat='ENTREGAT').order_by('-data_creacio')
+
+        productes_mes_venuts = (
+            LineaAlbara.objects
+            .filter(albara__estat='ENTREGAT')
+            .values('producte__nom')
+            .annotate(quantitat_total=Sum('quantitat'))
+            .order_by('-quantitat_total')
+        )
+
+        vendes_per_categoria = (
+            LineaAlbara.objects
+            .filter(albara__estat='ENTREGAT')
+            .values('producte__categoria__nom')
+            .annotate(total_vendes=Sum('subtotal'))
+            .order_by('producte__categoria__nom')
+        )
+
+        categories_labels = [item['producte__categoria__nom'] for item in vendes_per_categoria]
+        categories_totals = [float(item['total_vendes'] or 0) for item in vendes_per_categoria]
+
+        colors = ['#00FFFF', '#248241', '#FF69B4', '#FFA500', '#4169E1']
+        fig = go.Figure(data=[
+            go.Bar(
+                x=categories_labels,
+                y=categories_totals,
+                marker_color=[colors[i % len(colors)] for i in range(len(categories_labels))]
+            )
+        ])
+
+        fig.update_layout(
+            title='Vendes per categoria',
+            xaxis_tickangle=-45,
+            yaxis_tickangle=-45,
+            font=dict(
+                family='Courier New, monospace',
+            ),
+            height=600,
+            width=800,
+            autosize=True,
+            xaxis_title_text='Categoria',
+            yaxis_title_text='Vendes',
+        )
+
+        grafic_html = fig.to_html(div_id='vendesCategoriaChart', full_html=False)
+
+        ranking_clients = (
+            Albara.objects
+            .filter(estat='ENTREGAT')
+            .values('client__nom_comercial')
+            .annotate(volum_compra=Sum('total'))
+            .order_by('-volum_compra')
+        )
+
+        return render(
+            request,
+            'consulta/estadistiques.html',
+            {
+                'albarans': albarans,
+                'productesMesVenuts': productes_mes_venuts,
+                'grafic': grafic_html,
+                'rankingClients': ranking_clients,
+            }
+        )
 
 class CanviarEstat(View):
     def get(self, request, *args, **kwargs):

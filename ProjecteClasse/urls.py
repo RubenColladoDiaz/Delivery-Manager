@@ -17,6 +17,7 @@ urlpatterns = [
     path('albara/<int:id>/estat/', views.CanviarEstatFormulari.as_view(), name='canviarEstatFormulari'),
     path('consulta/', views.Consulta.as_view(), name='consulta'),
     path('consulta/<int:numero_albara>', views.ResultatConsulta.as_view(), name='resultatConsulta'),
+    path('estadistiques/', views.Estadistiques.as_view(), name='estadistiques'),
     path('cataleg/', views.Cataleg.as_view(), name='cataleg'),
     path('cataleg/<str:categoria>/', views.CatalegFiltrat.as_view(), name='cataleg_filtrat'),
 ]
