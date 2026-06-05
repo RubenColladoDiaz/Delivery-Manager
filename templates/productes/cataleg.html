@@ -1,0 +1,19 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Cataleg de Productes</title>
+  </head>
+
+  <body>
+    {% for categoria in categories %}
+    <p>{{categoria}}</p>
+    <ol>
+      {% for producte in categoria.productes.all %} {% if producte.actiu %}
+      <li>{{producte.nom}}</li>
+      {% endif %} {% endfor %}
+    </ol>
+    {% endfor %}
+  </body>
+</html>

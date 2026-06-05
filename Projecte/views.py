@@ -5,7 +5,7 @@ from django.utils import timezone
 from django.shortcuts import render, redirect
 from django.views import View
 
-from Projecte.models import Client, Albara, LineaAlbara
+from Projecte.models import Client, Albara, LineaAlbara, Producte, Categoria
 
 
 # Create your views here.
@@ -44,6 +44,17 @@ class EditarClient(View):
 
         client.save()
         return redirect('llistatClients')
+    
+class Cataleg(View):
+    def get(self, request, *args, **kwargs):
+        categories = Categoria.objects.all()
+        return render(request, 'productes/cataleg.html', {'categories': categories})
+
+class CatalegFiltrat(View):
+    def get(self, request, *args, **kwargs):
+        categoriaURL = self.kwargs['categoria']
+        categoria = Categoria.objects.get(nom=categoriaURL)
+        return render(request, 'productes/catalegFiltrat.html', {'categoria': categoria})
 
 class LlistatAlbarans(View):
     def get(self, request, *args, **kwargs):
@@ -72,6 +83,7 @@ class CrearAlbara(View):
         data_entrega_prevista = request.POST['data_entrega_prevista']
         observacions = request.POST['observacions']
         client_id = request.POST['client']
+        total_iva = request.POST['total_iva']
 
         client = Client.objects.get(id=client_id)
 
@@ -82,6 +94,7 @@ class CrearAlbara(View):
             data_entrega_prevista=data_entrega_prevista,
             estat='PENDENT',
             total=0,
+            total_iva=total_iva,
             observacions=observacions
         )
         nouAlbara.save()
