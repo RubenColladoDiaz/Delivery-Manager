@@ -1,4 +1,4 @@
-#!/home/retr0/Escritorio/Django/ProjecteClasse/venv/bin/python3
+#!/home/retr0/workspace/projects/Django/ProjecteClasse/venv/bin/python3
 # -*- coding: utf-8 -*-
 import re
 import sys

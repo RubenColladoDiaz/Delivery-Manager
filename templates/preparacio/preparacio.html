@@ -1,0 +1,20 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Document</title>
+</head>
+<body>
+    <h2>Albarans de {{ empleat.user.username }}</h2>
+    <ol>
+        {% for albara in albarans %}
+            <li>{{ albara.numero_albara }} - {{ albara.estat }}</li>
+            <form method="post" action="{% url 'preparacioPOST' albara.id %}">
+                {% csrf_token %}
+                <button type="submit">Marcar com PREPARAT</button>
+            </form>
+        {% endfor %}
+    </ol>
+</body>
+</html>

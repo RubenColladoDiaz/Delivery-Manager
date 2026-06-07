@@ -7,7 +7,10 @@ from django.shortcuts import render, redirect
 from django.views import View
 import plotly.graph_objects as go
 
-from Projecte.models import Client, Albara, LineaAlbara, Producte, Categoria, StockMagatzem
+from Projecte.models import Client, Albara, LineaAlbara, Producte, Categoria, StockMagatzem, Empleat, Magatzem
+
+from django.contrib import messages
+from django.contrib.auth.forms import UserCreationForm
 
 # Create your views here.
 class LlistatClients(View):
@@ -140,6 +143,8 @@ class AfegirLinia(View):
 
             albara.total += subtotal
             albara.save()
+        else:
+            messages.error(request, 'No hi ha prou stock')
 
         return redirect('detallsAlbara', id=albara.id)
 
@@ -262,3 +267,71 @@ class ResultatConsulta(View):
                 noTrobat = "Albarà no trobada"
                 liniesAlbara = []
             return render(request, 'consulta/resultatConsulta.html', {'albara': albara, 'liniesAlbara': liniesAlbara, 'noTrobat': noTrobat})
+
+class Preparacio(View):
+    def get(self, request, *args, **kwargs):
+        if request.user.is_authenticated and request.user.empleat is not None:
+            empleat = request.user.empleat
+            albarans = empleat.magatzem_assignat.albarans.all()
+            albarans_filtrats = albarans.filter(estat__in=['PENDENT', 'EN_PREPARACIO'])
+            return render(request, 'preparacio/preparacio.html', {'albarans': albarans_filtrats,'empleat': empleat})
+
+    def post(self, request, *args, **kwargs):
+        idAlbara = self.kwargs['id']
+        albara = Albara.objects.get(id=idAlbara)
+        empleat = request.user.empleat
+
+        for linia_albara in albara.linies_albara.all():
+            stock = albara.magatzem.stocks_magatzem.get(producte=linia_albara.producte)
+            if not stock or stock.quantitat < linia_albara.quantitat:
+                return redirect('preparacio')
+
+        if albara.magatzem == empleat.magatzem_assignat:
+            stock = StockMagatzem.objects.get(magatzem=empleat.magatzem_assignat)
+            if stock.quantitat <= 0:
+                messages.error(request, 'Stock insuficient')
+                return redirect('albarans')
+            stock.quantitat = stock.quantitat - 1
+            albara.estat = 'ENVIAT'
+            albara.save()
+
+        return redirect('preparacio')
+
+class Stock(View):
+    def get(self, request, *args, **kwargs):
+        if request.user.is_authenticated and request.user.empleat is not None:
+            magatzems = Magatzem.objects.all()
+            productes = Producte.objects.all()
+            return render(request, 'stock/stock.html', {'magatzems': magatzems, 'productes': productes})
+
+class StockReposicio(View):
+    def get(self, request, *args, **kwargs):
+        if request.user.is_authenticated and request.user.empleat is not None:
+            productes = Producte.objects.all()
+            magatzems = Magatzem.objects.all()
+            return render(request, 'stock/reposicio.html', {'magatzems': magatzems, 'productes': productes})
+
+    def post(self, request, *args, **kwargs):
+        magatzem = request.POST['magatzemSeleccionat']
+        quantitat = int(request.POST['quantitat'])
+        # get UNO. filter MUCHOS aunque sea VACIO
+        stock = StockMagatzem.objects.get(magatzem=magatzem)
+        stock.quantitat += quantitat
+        stock.save()
+        return redirect('stock')
+
+
+class Register(View):
+    def get(self, request):
+        form = UserCreationForm()
+        return render(request, "auth/register.html", {"form": form})
+
+    def post(self, request):
+        form = UserCreationForm(request.POST)
+
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Usuario creado correctamente")
+            return redirect("login")
+
+        return render(request, "auth/register.html", {"form": form})

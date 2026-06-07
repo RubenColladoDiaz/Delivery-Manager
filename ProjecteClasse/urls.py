@@ -3,6 +3,8 @@ from django.urls import path
 
 from Projecte import views
 
+from django.contrib.auth import views as auth_views
+
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', views.LlistatClients.as_view(), name='home'),
@@ -20,4 +22,11 @@ urlpatterns = [
     path('estadistiques/', views.Estadistiques.as_view(), name='estadistiques'),
     path('cataleg/', views.Cataleg.as_view(), name='cataleg'),
     path('cataleg/<str:categoria>/', views.CatalegFiltrat.as_view(), name='cataleg_filtrat'),
+    path('preparacio/', views.Preparacio.as_view(), name='preparacio'),
+    path('preparacio/<int:id>/', views.Preparacio.as_view(), name='preparacioPOST'),
+    path('stock/', views.Stock.as_view(), name='stock'),
+    path('stock/reposicio/', views.StockReposicio.as_view(), name='stockReposicio'),
+    path("login/", auth_views.LoginView.as_view(template_name="auth/login.html"), name="login"),
+    path("logout/", auth_views.LogoutView.as_view(), name="logout"),
+    path("register/", views.Register.as_view(), name="register"),
 ]

@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Stock de productes</title>
+</head>
+<body>
+    <table border="1">
+        <tr>
+            <td>Producte</td>
+
+            {% for magatzem in magatzems %}
+                <td>{{ magatzem.nom }}</td>
+            {% endfor %}
+
+            <td>Última entrada</td>
+        </tr>
+        {% for producte in productes %}
+            <tr>
+                <td>{{ producte.nom }}</td>
+                {% for magatzem in magatzems %}
+                    <td>
+                        {% for s in magatzem.stocks_magatzem.all %}
+                            {% if s.producte == producte %}
+                                {{ s.quantitat }}
+                                {% if s.quantitat < 10 %}
+                                    ⚠️ Stock baix
+                                {% endif %}
+                            {% endif %}
+                        {% endfor %}
+                    </td>
+                {% endfor %}
+                <td>
+                    {% for magatzem in magatzems %}
+                        {% for s in magatzem.stocks_magatzem.all %}
+                            {% if s.producte == producte %}
+                                {{ s.data_ultima_entrada }}
+                            {% endif %}
+                        {% endfor %}
+                    {% endfor %}
+                </td>
+            </tr>
+        {% endfor %}
+    </table>
+</body>
+</html>
