@@ -1,47 +1,74 @@
-<!doctype html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Stock de productes</title>
-</head>
-<body>
-    <table border="1">
-        <tr>
-            <td>Producte</td>
+{% extends "base.html" %}
 
-            {% for magatzem in magatzems %}
-                <td>{{ magatzem.nom }}</td>
-            {% endfor %}
+{% block title %}Stock - DeliveryHub{% endblock %}
 
-            <td>Última entrada</td>
-        </tr>
-        {% for producte in productes %}
-            <tr>
-                <td>{{ producte.nom }}</td>
-                {% for magatzem in magatzems %}
-                    <td>
-                        {% for s in magatzem.stocks_magatzem.all %}
-                            {% if s.producte == producte %}
-                                {{ s.quantitat }}
-                                {% if s.quantitat < 10 %}
-                                    ⚠️ Stock baix
-                                {% endif %}
-                            {% endif %}
-                        {% endfor %}
-                    </td>
-                {% endfor %}
-                <td>
-                    {% for magatzem in magatzems %}
-                        {% for s in magatzem.stocks_magatzem.all %}
-                            {% if s.producte == producte %}
-                                {{ s.data_ultima_entrada }}
-                            {% endif %}
-                        {% endfor %}
-                    {% endfor %}
-                </td>
-            </tr>
-        {% endfor %}
-    </table>
-</body>
-</html>
+{% block content %}
+<div class="pt-20">
+    <!-- Header -->
+    <div class="max-w-7xl mx-auto px-4 mb-12 animate-slide-down">
+        <h1 class="text-5xl font-black gradient-text mb-2">Gestió de Stock</h1>
+        <p class="text-gray-400">Control d'inventari per magatzem</p>
+    </div>
+
+    <!-- Stock Table -->
+    <div class="max-w-7xl mx-auto px-4 mb-20">
+        {% if productes %}
+            <div class="glass-hover rounded-2xl overflow-hidden animate-fade-scale">
+                <div class="overflow-x-auto">
+                    <table class="w-full">
+                        <thead class="bg-slate-700/50 border-b border-slate-600/50">
+                            <tr>
+                                <th class="px-6 py-4 text-left text-sm font-semibold text-white">Producte</th>
+                                {% for magatzem in magatzems %}
+                                    <th class="px-6 py-4 text-center text-sm font-semibold text-white">{{ magatzem.nom }}</th>
+                                {% endfor %}
+                                <th class="px-6 py-4 text-center text-sm font-semibold text-white">Última Entrada</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-slate-700/30">
+                            {% for producte in productes %}
+                                <tr class="hover:bg-slate-700/20 transition">
+                                    <td class="px-6 py-4 text-white font-semibold">{{ producte.nom }}</td>
+                                    {% for magatzem in magatzems %}
+                                        <td class="px-6 py-4 text-center">
+                                            {% for s in magatzem.stocks_magatzem.all %}
+                                                {% if s.producte == producte %}
+                                                    <div class="flex items-center justify-center gap-2">
+                                                        <span class="{% if s.quantitat < 10 %}text-red-400 font-bold{% else %}text-green-400{% endif %}">{{ s.quantitat }}</span>
+                                                        {% if s.quantitat < 10 %}
+                                                            <span class="text-red-400 text-xl" title="Stock baix">⚠️</span>
+                                                        {% endif %}
+                                                    </div>
+                                                {% endif %}
+                                            {% endfor %}
+                                        </td>
+                                    {% endfor %}
+                                    <td class="px-6 py-4 text-center text-gray-400 text-sm">
+                                        {% for magatzem in magatzems %}
+                                            {% for s in magatzem.stocks_magatzem.all %}
+                                                {% if s.producte == producte %}
+                                                    {{ s.data_ultima_entrada }}
+                                                {% endif %}
+                                            {% endfor %}
+                                        {% endfor %}
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Legend -->
+            <div class="mt-6 glass rounded-xl p-4">
+                <p class="text-sm text-gray-400"><i class="fas fa-exclamation-triangle text-red-400 mr-2"></i>Stock baix: Menys de 10 unitats</p>
+            </div>
+        {% else %}
+            <div class="glass rounded-2xl p-12 text-center animate-fade-scale">
+                <i class="fas fa-warehouse text-6xl text-gray-500 mb-4"></i>
+                <p class="text-gray-400">No hi ha productes al stock</p>
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

@@ -1,48 +1,136 @@
-<html>
-<head>
-    <meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
-    <title>Editar Client</title>
-</head>
-<body>
-<form action="{% url 'editarClient' client.id %}" method="post">
-    {% csrf_token %}
-        <fieldset>
-            <legend>Editar Client</legend>
+{% extends "base.html" %}
 
-            <label>Codi client:</label>
-            <input type="text" value="{{ client.codi_client }}" name="codi_client"><br />
+{% block title %}Editar {{ client.nom_comercial }} - DeliveryHub{% endblock %}
 
-            <label>Nom comercial:</label>
-            <input type="text" value="{{ client.nom_comercial }}" name="nom_comercial"><br />
+{% block content %}
+<div class="pt-20">
+    <!-- Header -->
+    <div class="max-w-2xl mx-auto px-4 mb-8 animate-slide-down">
+        <h1 class="text-5xl font-black gradient-text mb-2">Editar Client</h1>
+        <p class="text-gray-400">Actualitza la informació de {{ client.nom_comercial }}</p>
+    </div>
 
-            <label>CIF:</label>
-            <input type="text" value="{{ client.cif }}" name="cif">
+    <!-- Form Card -->
+    <div class="max-w-2xl mx-auto px-4 mb-20">
+        <div class="glass-hover rounded-2xl p-8 animate-fade-scale">
+            <form action="{% url 'editarClient' client.id %}" method="post">
+                {% csrf_token %}
 
-            <label>Persona contacte:</label>
-            <input type="text" value="{{ client.persona_contacte }}" name="persona_contacte"><br />
+                <div class="grid grid-cols-2 gap-6">
+                    <!-- Codi Client -->
+                    <div>
+                        <label class="block text-sm font-semibold mb-2 text-gray-300">Codi Client</label>
+                        <input type="text" name="codi_client" value="{{ client.codi_client }}" required>
+                    </div>
 
-            <label>Telèfon:</label>
-            <input type="number" value="{{ client.telefon }}" name="telefon"><br />
+                    <!-- Nom Comercial -->
+                    <div>
+                        <label class="block text-sm font-semibold mb-2 text-gray-300">Nom Comercial</label>
+                        <input type="text" name="nom_comercial" value="{{ client.nom_comercial }}" required>
+                    </div>
 
-            <label>Email:</label>
-            <input type="email" value="{{ client.email }}" name="email"><br />
+                    <!-- CIF -->
+                    <div>
+                        <label class="block text-sm font-semibold mb-2 text-gray-300">CIF</label>
+                        <input type="text" name="cif" value="{{ client.cif }}" required>
+                    </div>
 
-            <label>Adreça entrega:</label>
-            <input type="text" value="{{ client.adreca_entrega }}" name="adreca_entrega"><br />
+                    <!-- Persona Contacte -->
+                    <div>
+                        <label class="block text-sm font-semibold mb-2 text-gray-300">Persona de Contacte</label>
+                        <input type="text" name="persona_contacte" value="{{ client.persona_contacte }}">
+                    </div>
 
-            <label>Població:</label>
-            <input type="text" value="{{ client.poblacio }}" name="poblacio"><br />
+                    <!-- Telèfon -->
+                    <div>
+                        <label class="block text-sm font-semibold mb-2 text-gray-300">Telèfon</label>
+                        <input type="tel" name="telefon" value="{{ client.telefon }}">
+                    </div>
 
-            <label>Codi postal:</label>
-            <input type="number" value="{{ client.codi_postal }}" name="codi_postal"><br />
+                    <!-- Email -->
+                    <div>
+                        <label class="block text-sm font-semibold mb-2 text-gray-300">Email</label>
+                        <input type="email" name="email" value="{{ client.email }}">
+                    </div>
 
-            <label>Actiu:</label>
-            <input type="checkbox" name="actiu" {% if client.actiu %}checked{% endif %}>
-        </fieldset>
+                    <!-- Adreça Entrega (full width) -->
+                    <div class="col-span-2">
+                        <label class="block text-sm font-semibold mb-2 text-gray-300">Adreça d'Entrega</label>
+                        <input type="text" name="adreca_entrega" value="{{ client.adreca_entrega }}" class="w-full">
+                    </div>
 
-        <input type="submit" value="Guardar canvis">
-    </form>
+                    <!-- População -->
+                    <div>
+                        <label class="block text-sm font-semibold mb-2 text-gray-300">Ciutat</label>
+                        <input type="text" name="poblacio" value="{{ client.poblacio }}">
+                    </div>
 
-    <a href="/clients/{{ client.id }}/"><button>Cancel·lar</button></a>
-</body>
-</html>
+                    <!-- Codi Postal -->
+                    <div>
+                        <label class="block text-sm font-semibold mb-2 text-gray-300">Codi Postal</label>
+                        <input type="text" name="codi_postal" value="{{ client.codi_postal }}">
+                    </div>
+
+                    <!-- Actiu -->
+                    <div class="col-span-2">
+                        <label class="flex items-center gap-3 cursor-pointer">
+                            <input type="checkbox" name="actiu" {% if client.actiu %}checked{% endif %} class="w-5 h-5 rounded">
+                            <span class="text-white font-semibold">Client Actiu</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Buttons -->
+                <div class="flex gap-4 mt-8 pt-8 border-t border-slate-700/50">
+                    <button type="submit" class="flex-1 btn-primary py-3 rounded-xl font-bold text-white transition">
+                        <i class="fas fa-save mr-2"></i>Guardar Canvis
+                    </button>
+                    <a href="{% url 'detallsClient' client.id %}" class="flex-1 bg-slate-700 hover:bg-slate-600 text-white px-4 py-3 rounded-xl transition text-center font-semibold">
+                        <i class="fas fa-times mr-2"></i>Cancel·lar
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<style>
+    input[type="text"], input[type="tel"], input[type="email"] {
+        width: 100%;
+        padding: 12px 16px;
+        background: rgba(30, 41, 59, 0.6);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 8px;
+        color: white;
+        font-size: 1rem;
+        transition: all 0.3s ease;
+    }
+
+    input:focus {
+        outline: none;
+        background: rgba(30, 41, 59, 0.8);
+        border-color: rgba(59, 130, 246, 0.5);
+        box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+    }
+
+    input::placeholder {
+        color: rgba(255, 255, 255, 0.5);
+    }
+
+    input[type="checkbox"] {
+        appearance: none;
+        width: 20px;
+        height: 20px;
+        background: rgba(30, 41, 59, 0.6);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 4px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+
+    input[type="checkbox"]:checked {
+        background: linear-gradient(135deg, #3b82f6 0%, #06b6d4 100%);
+        border-color: rgba(59, 130, 246, 0.5);
+    }
+</style>
+{% endblock %}

@@ -7,7 +7,7 @@ from django.contrib.auth import views as auth_views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', views.LlistatClients.as_view(), name='home'),
+    path('', views.Home.as_view(), name='home'),
     path('clients/', views.LlistatClients.as_view(), name='llistatClients'),
     path('clients/<int:id>/', views.DetallsClient.as_view(), name='detallsClient'),
     path('clients/<int:id>/editar/', views.EditarClient.as_view(), name='editarClient'),

@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Delivery Manager{% endblock %}</title>
+    <link href="/static/css/output.css" rel="stylesheet">
+    <link href="/static/css/custom.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white min-h-screen">
+    <nav class="fixed top-0 w-full bg-slate-900/80 backdrop-blur-md z-50 border-b border-slate-700/50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <a href="{% url 'home' %}" class="text-2xl font-bold bg-gradient-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent hover:from-blue-300 hover:to-cyan-300 transition">
+                    📦 DeliveryHub
+                </a>
+                <div class="flex items-center gap-4">
+                    {% if user.is_authenticated %}
+                        <span class="text-sm text-gray-300">Benvingut, <strong>{{ user.username }}</strong></span>
+                        <a href="{% url 'logout' %}" class="px-4 py-2 bg-red-600 hover:bg-red-700 rounded-lg transition text-sm font-medium">
+                            Logout
+                        </a>
+                    {% else %}
+                        <a href="{% url 'login' %}" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded-lg transition text-sm font-medium">
+                            Login
+                        </a>
+                        <a href="{% url 'register' %}" class="px-4 py-2 bg-cyan-600 hover:bg-cyan-700 rounded-lg transition text-sm font-medium">
+                            Registre
+                        </a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <main class="pt-16">
+        {% block content %}{% endblock %}
+    </main>
+
+    <footer class="bg-slate-950/50 border-t border-slate-700/50 mt-20 py-8">
+        <div class="max-w-7xl mx-auto px-4 text-center text-gray-400 text-sm">
+            <p>© 2026 DeliveryHub. Tots els drets reservats.</p>
+        </div>
+    </footer>
+</body>
+</html>

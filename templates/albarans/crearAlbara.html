@@ -1,35 +1,103 @@
-<html>
-<head>
-    <meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
-    <title>Crear Albarà</title>
-</head>
-<body>
-    <form action="{% url 'crearAlbara' %}" method="post">
-        {% csrf_token %}
+{% extends "base.html" %}
 
-        <fieldset>
-            <legend>Crear nou albarà</legend>
+{% block title %}Crear Albarà - DeliveryHub{% endblock %}
 
-            <select name="client">
-                {% for client in clients %}
-                    <option value="{{ client.id }}">{{ client.nom_comercial }}</option>
-                {% endfor %}
-            </select>
+{% block content %}
+<div class="pt-20">
+    <!-- Header -->
+    <div class="max-w-2xl mx-auto px-4 mb-8 animate-slide-down">
+        <h1 class="text-5xl font-black gradient-text mb-2">Crear Albarà</h1>
+        <p class="text-gray-400">Crea un nou albarà de lliurament</p>
+    </div>
 
-            <label>Número Albarà:</label>
-            <input type="text" name="numero_albara">
+    <!-- Form Card -->
+    <div class="max-w-2xl mx-auto px-4 mb-20">
+        <div class="glass-hover rounded-2xl p-8 animate-fade-scale">
+            <form action="{% url 'crearAlbara' %}" method="post">
+                {% csrf_token %}
 
-            <label>Data d'entrega prevista:</label>
-            <input type="date" name="data_entrega_prevista">
+                <div class="space-y-6">
+                    <!-- Client Selection -->
+                    <div>
+                        <label class="block text-sm font-semibold mb-2 text-gray-300">Client</label>
+                        <select name="client" required class="w-full form-select">
+                            <option value="" selected disabled>Selecciona un client...</option>
+                            {% for client in clients %}
+                                <option value="{{ client.id }}">{{ client.nom_comercial }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
 
-            <label>IVA</label>
-            <input type="number" name="total_iva">
+                    <!-- Numero Albara -->
+                    <div>
+                        <label class="block text-sm font-semibold mb-2 text-gray-300">Número Albarà</label>
+                        <input type="text" name="numero_albara" required placeholder="P.ex. ALB-001-2026">
+                    </div>
 
-            <label>Observacions:</label>
-            <textarea name="observacions" cols="30" rows="10"></textarea>
-        </fieldset>
+                    <!-- Data Entrega Prevista -->
+                    <div>
+                        <label class="block text-sm font-semibold mb-2 text-gray-300">Data d'Entrega Prevista</label>
+                        <input type="date" name="data_entrega_prevista" required>
+                    </div>
 
-        <input type="submit" value="Enviar">
-    </form>
-</body>
-</html>
+                    <!-- IVA -->
+                    <div>
+                        <label class="block text-sm font-semibold mb-2 text-gray-300">IVA (%)</label>
+                        <input type="number" name="total_iva" placeholder="21" min="0" max="100" step="0.01">
+                    </div>
+
+                    <!-- Observations -->
+                    <div>
+                        <label class="block text-sm font-semibold mb-2 text-gray-300">Observacions</label>
+                        <textarea name="observacions" placeholder="Afegeix observacions si cal..." rows="5" class="w-full"></textarea>
+                    </div>
+                </div>
+
+                <!-- Buttons -->
+                <div class="flex gap-4 mt-8 pt-8 border-t border-slate-700/50">
+                    <button type="submit" class="flex-1 btn-primary py-3 rounded-xl font-bold text-white transition">
+                        <i class="fas fa-check mr-2"></i>Crear Albarà
+                    </button>
+                    <a href="{% url 'llistatAlbarans' %}" class="flex-1 bg-slate-700 hover:bg-slate-600 text-white px-4 py-3 rounded-xl transition text-center font-semibold">
+                        <i class="fas fa-times mr-2"></i>Cancel·lar
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<style>
+    input[type="text"], input[type="date"], input[type="number"], select, textarea {
+        width: 100%;
+        padding: 12px 16px;
+        background: rgba(30, 41, 59, 0.6);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 8px;
+        color: white;
+        font-size: 1rem;
+        transition: all 0.3s ease;
+    }
+
+    input:focus, select:focus, textarea:focus {
+        outline: none;
+        background: rgba(30, 41, 59, 0.8);
+        border-color: rgba(59, 130, 246, 0.5);
+        box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+    }
+
+    input::placeholder, textarea::placeholder {
+        color: rgba(255, 255, 255, 0.5);
+    }
+
+    select option {
+        background-color: #1e293b;
+        color: white;
+    }
+
+    textarea {
+        resize: vertical;
+        font-family: inherit;
+    }
+</style>
+{% endblock %}

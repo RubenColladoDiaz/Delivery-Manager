@@ -1,33 +1,125 @@
-<html>
-<head>
-    <meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
-    <title>Detalls de client</title>
-</head>
-<body>
-    <p>Client {{ client.codi_client }}</p>
-    <br />
-    <p>Nom comercial: {{ client.nom_comercial }}</p>
-    <p>CIF: {{ client.cif }}</p>
-    <p>Persona contacte: {{ client.persona_contacte }}</p>
-    <p>Telèfon: {{ client.telefon }}</p>
-    <p>Email: {{ client.email }}</p>
-    <p>Adreça entrega: {{ client.adreca_entrega }}</p>
-    <p>Població: {{ client.poblacio }}</p>
-    <p>Codi postal: {{ client.codi_postal }}</p>
-    <p>Actiu: {{ client.actiu }}</p>
-    <br />
-    <h2>Albarans de {{ client.nom_comercial }}</h2>
-    <ol>
-        {% for albara in client.albarans.all %}
-        <li>
-            <p>{{ albara.numero_albara }}, {{ albara.data_creacio }}, {{ albara.estat }}, {{ albara.total }}</p>
-        </li>
-        {% empty %}
-            <p>No conté cap albarà</p>
-        {% endfor %}
-    </ol>
-    <br />
-    <a href="/clients/{{ client.id }}/editar/"><button>Editar client</button></a> <br />
-    <a href="/clients/">Tornar</a>
-</body>
-</html>
+{% extends "base.html" %}
+
+{% block title %}{{ client.nom_comercial }} - DeliveryHub{% endblock %}
+
+{% block content %}
+<div class="pt-20">
+    <!-- Header -->
+    <div class="max-w-6xl mx-auto px-4 mb-8 animate-slide-down">
+        <a href="{% url 'llistatClients' %}" class="text-cyan-400 hover:text-cyan-300 mb-4 inline-flex items-center transition">
+            <i class="fas fa-arrow-left mr-2"></i>Tornar
+        </a>
+        <h1 class="text-5xl font-black gradient-text mb-2">{{ client.nom_comercial }}</h1>
+        <p class="text-gray-400">Client #{{ client.codi_client }}</p>
+    </div>
+
+    <!-- Main Content -->
+    <div class="max-w-6xl mx-auto px-4 grid grid-cols-1 lg:grid-cols-3 gap-6 mb-12">
+        <!-- Info Card -->
+        <div class="lg:col-span-2 glass-hover rounded-2xl p-8 animate-fade-scale">
+            <h2 class="text-2xl font-bold text-white mb-6">
+                <i class="fas fa-user text-cyan-400 mr-2"></i>Informació del Client
+            </h2>
+            
+            <div class="grid grid-cols-2 gap-6">
+                <div>
+                    <p class="text-gray-400 text-sm mb-1">CIF</p>
+                    <p class="text-white font-mono text-lg">{{ client.cif }}</p>
+                </div>
+                <div>
+                    <p class="text-gray-400 text-sm mb-1">Codi Client</p>
+                    <p class="text-white font-mono text-lg">{{ client.codi_client }}</p>
+                </div>
+                <div>
+                    <p class="text-gray-400 text-sm mb-1">Persona de Contacte</p>
+                    <p class="text-white">{{ client.persona_contacte }}</p>
+                </div>
+                <div>
+                    <p class="text-gray-400 text-sm mb-1">Telèfon</p>
+                    <p class="text-white">{{ client.telefon }}</p>
+                </div>
+                <div class="col-span-2">
+                    <p class="text-gray-400 text-sm mb-1">Email</p>
+                    <p class="text-white">{{ client.email }}</p>
+                </div>
+                <div class="col-span-2">
+                    <p class="text-gray-400 text-sm mb-1">Adreça d'Entrega</p>
+                    <p class="text-white">{{ client.adreca_entrega }}</p>
+                </div>
+                <div>
+                    <p class="text-gray-400 text-sm mb-1">Ciutat</p>
+                    <p class="text-white">{{ client.poblacio }}</p>
+                </div>
+                <div>
+                    <p class="text-gray-400 text-sm mb-1">Codi Postal</p>
+                    <p class="text-white">{{ client.codi_postal }}</p>
+                </div>
+            </div>
+
+            <div class="mt-8 pt-6 border-t border-slate-700/50 flex gap-4">
+                <a href="{% url 'editarClient' client.id %}" class="flex-1 bg-blue-600 hover:bg-blue-700 text-white px-4 py-3 rounded-lg transition text-center font-semibold">
+                    <i class="fas fa-edit mr-2"></i>Editar Client
+                </a>
+                <a href="{% url 'llistatClients' %}" class="flex-1 bg-slate-700 hover:bg-slate-600 text-white px-4 py-3 rounded-lg transition text-center font-semibold">
+                    <i class="fas fa-times mr-2"></i>Cancel·lar
+                </a>
+            </div>
+        </div>
+
+        <!-- Stats Card -->
+        <div class="glass rounded-2xl p-8 animate-fade-scale" style="animation-delay: 0.1s;">
+            <h3 class="text-xl font-bold text-white mb-6">
+                <i class="fas fa-chart-bar text-purple-400 mr-2"></i>Estadístiques
+            </h3>
+            <div class="space-y-4">
+                <div class="bg-slate-700/50 rounded-lg p-4">
+                    <p class="text-gray-400 text-sm">Total Albarans</p>
+                    <p class="text-3xl font-bold gradient-text">{{ client.albarans.all|length }}</p>
+                </div>
+                <div class="bg-slate-700/50 rounded-lg p-4">
+                    <p class="text-gray-400 text-sm">Estat</p>
+                    <p class="text-white font-semibold">
+                        {% if client.actiu %}
+                            <span class="text-green-400">Actiu</span>
+                        {% else %}
+                            <span class="text-red-400">Inactiu</span>
+                        {% endif %}
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Albarans Section -->
+    <div class="max-w-6xl mx-auto px-4 mb-20">
+        <h2 class="text-3xl font-bold gradient-text mb-8 animate-slide-up">
+            <i class="fas fa-file-invoice text-cyan-400 mr-2"></i>Albarans de {{ client.nom_comercial }}
+        </h2>
+
+        {% if client.albarans.all %}
+            <div class="space-y-4">
+                {% for albara in client.albarans.all %}
+                    <div class="glass-hover rounded-xl p-6 flex justify-between items-center group hover-lift">
+                        <div>
+                            <h4 class="text-xl font-bold text-white mb-2">Albarà #{{ albara.numero_albara }}</h4>
+                            <div class="flex gap-6 text-gray-400 text-sm">
+                                <span><i class="fas fa-calendar mr-2 text-blue-400"></i>{{ albara.data_creacio }}</span>
+                                <span><i class="fas fa-flag mr-2 text-cyan-400"></i>{{ albara.estat }}</span>
+                                <span><i class="fas fa-money-bill mr-2 text-emerald-400"></i>{{ albara.total }}€</span>
+                            </div>
+                        </div>
+                        <a href="{% url 'detallsAlbara' albara.id %}" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition font-semibold">
+                            <i class="fas fa-arrow-right mr-1"></i>Veure
+                        </a>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="glass rounded-2xl p-12 text-center">
+                <i class="fas fa-file-invoice text-6xl text-gray-500 mb-4"></i>
+                <p class="text-gray-400">No hi ha albarans per aquest client</p>
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

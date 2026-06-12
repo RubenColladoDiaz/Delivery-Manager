@@ -1,39 +1,98 @@
-<html>
+{% extends "base.html" %}
 
-<head>
-    <meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
-    <title>Afegir Linia Albarà</title>
-</head>
+{% block title %}Afegir Línia - DeliveryHub{% endblock %}
 
-<body>
-    <form action="{% url 'afegirLinia' albara.id %}" method="post">
-        {% csrf_token %}
+{% block content %}
+<div class="pt-20">
+    <!-- Header -->
+    <div class="max-w-2xl mx-auto px-4 mb-8 animate-slide-down">
+        <h1 class="text-5xl font-black gradient-text mb-2">Afegir Línia</h1>
+        <p class="text-gray-400">Albarà #{{ albara.numero_albara }}</p>
+    </div>
 
-        <fieldset>
-            <legend>Afegir linia a albarà num.{{ albara.numero_albara }}</legend>
+    <!-- Form Card -->
+    <div class="max-w-2xl mx-auto px-4 mb-20">
+        <div class="glass-hover rounded-2xl p-8 animate-fade-scale">
+            <form action="{% url 'afegirLinia' albara.id %}" method="post">
+                {% csrf_token %}
 
-            <select name="producteSeleccionat">
-                <option value="">Selecciona un producte</option>
-                {% for producte in productes %}
-                <option value={{producte.id}}>{{producte.nom}}</option>
-                {% endfor %}
-            </select>
+                <div class="space-y-6">
+                    <!-- Producte -->
+                    <div>
+                        <label class="block text-sm font-semibold mb-2 text-gray-300">Producte</label>
+                        <select name="producteSeleccionat" required class="form-select w-full">
+                            <option value="" selected disabled>Selecciona un producte...</option>
+                            {% for producte in productes %}
+                                <option value="{{ producte.id }}">{{ producte.nom }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
 
-            <label>Quantitat:</label>
-            <input type="number" name="quantitat">
+                    <!-- Quantitat -->
+                    <div>
+                        <label class="block text-sm font-semibold mb-2 text-gray-300">Quantitat</label>
+                        <input type="number" name="quantitat" required min="1" placeholder="1">
+                    </div>
 
-            <label>Preu unitari:</label>
-            <input type="number" name="preu_unitari">
+                    <!-- Preu Unitari -->
+                    <div>
+                        <label class="block text-sm font-semibold mb-2 text-gray-300">Preu Unitari (€)</label>
+                        <input type="number" name="preu_unitari" required min="0" step="0.01" placeholder="0.00">
+                    </div>
 
-            <label>Descompte:</label>
-            <input type="number" name="descompte">
+                    <!-- Descompte -->
+                    <div>
+                        <label class="block text-sm font-semibold mb-2 text-gray-300">Descompte (%)</label>
+                        <input type="number" name="descompte" min="0" max="100" step="0.01" placeholder="0">
+                    </div>
 
-            <label>Notes:</label>
-            <input type="text" name="notes">
-        </fieldset>
+                    <!-- Notes -->
+                    <div>
+                        <label class="block text-sm font-semibold mb-2 text-gray-300">Notes</label>
+                        <input type="text" name="notes" placeholder="Afegeix observacions si cal...">
+                    </div>
+                </div>
 
-        <input type="submit" value="Afegir">
-    </form>
-</body>
+                <!-- Buttons -->
+                <div class="flex gap-4 mt-8 pt-8 border-t border-slate-700/50">
+                    <button type="submit" class="flex-1 btn-primary py-3 rounded-xl font-bold text-white transition">
+                        <i class="fas fa-plus mr-2"></i>Afegir Línia
+                    </button>
+                    <a href="{% url 'detallsAlbara' albara.id %}" class="flex-1 bg-slate-700 hover:bg-slate-600 text-white px-4 py-3 rounded-xl transition text-center font-semibold">
+                        <i class="fas fa-times mr-2"></i>Cancel·lar
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
 
-</html>
+<style>
+    input[type="text"], input[type="number"], select {
+        width: 100%;
+        padding: 12px 16px;
+        background: rgba(30, 41, 59, 0.6);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 8px;
+        color: white;
+        font-size: 1rem;
+        transition: all 0.3s ease;
+    }
+
+    input:focus, select:focus {
+        outline: none;
+        background: rgba(30, 41, 59, 0.8);
+        border-color: rgba(59, 130, 246, 0.5);
+        box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+    }
+
+    input::placeholder {
+        color: rgba(255, 255, 255, 0.5);
+    }
+
+    select option {
+        background-color: #1e293b;
+        color: white;
+    }
+</style>
+{% endblock %}

@@ -1,19 +1,60 @@
-<!doctype html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Cataleg de Productes</title>
-  </head>
+{% extends "base.html" %}
 
-  <body>
-    {% for categoria in categories %}
-    <p>{{categoria}}</p>
-    <ol>
-      {% for producte in categoria.productes.all %} {% if producte.actiu %}
-      <li>{{producte.nom}}</li>
-      {% endif %} {% endfor %}
-    </ol>
-    {% endfor %}
-  </body>
-</html>
+{% block title %}Catàleg de Productes - DeliveryHub{% endblock %}
+
+{% block content %}
+<div class="pt-20">
+    <!-- Header -->
+    <div class="max-w-7xl mx-auto px-4 mb-12 animate-slide-down">
+        <h1 class="text-5xl font-black gradient-text mb-2">Catàleg de Productes</h1>
+        <p class="text-gray-400">Explora tots els productes disponibles</p>
+    </div>
+
+    <!-- Categories -->
+    <div class="max-w-7xl mx-auto px-4 mb-20">
+        {% for categoria in categories %}
+            <div class="mb-12">
+                <h2 class="text-3xl font-bold gradient-text mb-6 animate-slide-up">
+                    <i class="fas fa-folder-open text-cyan-400 mr-2"></i>{{ categoria.nom }}
+                </h2>
+
+                {% if categoria.productes.all %}
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 grid-stagger">
+                        {% for producte in categoria.productes.all %}
+                            {% if producte.actiu %}
+                                <div class="glass-hover rounded-2xl p-6 group hover-lift">
+                                    <div class="flex items-start justify-between mb-4">
+                                        <div>
+                                            <h3 class="text-xl font-bold text-white mb-1">{{ producte.nom }}</h3>
+                                            <p class="text-blue-400 text-sm">SKU: {{ producte.id }}</p>
+                                        </div>
+                                        <span class="bg-emerald-500/20 text-emerald-400 px-2 py-1 rounded text-xs font-semibold">Actiu</span>
+                                    </div>
+
+                                    {% if producte.descripcio %}
+                                        <p class="text-gray-400 text-sm mb-4">{{ producte.descripcio|truncatewords:20 }}</p>
+                                    {% endif %}
+
+                                    <div class="flex justify-between items-end">
+                                        <div>
+                                            <p class="text-gray-400 text-xs">Categoria</p>
+                                            <p class="text-white font-semibold">{{ categoria.nom }}</p>
+                                        </div>
+                                        <a href="{% url 'cataleg_filtrat' categoria.nom %}" class="bg-cyan-600 hover:bg-cyan-700 text-white px-3 py-2 rounded-lg transition text-sm font-semibold">
+                                            <i class="fas fa-arrow-right mr-1"></i>Veure
+                                        </a>
+                                    </div>
+                                </div>
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <div class="glass rounded-2xl p-8 text-center">
+                        <p class="text-gray-400">No hi ha productes en aquesta categoria</p>
+                    </div>
+                {% endif %}
+            </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

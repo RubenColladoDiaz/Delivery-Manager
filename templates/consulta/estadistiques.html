@@ -1,41 +1,115 @@
-<!DOCTYPE html>
-<html lang="ca">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Estadistiques</title>
-</head>
-<body>
-    <h1>Estadistiques</h1>
+{% extends "base.html" %}
 
-    <h2>Tots els albarans entregats (amb totals)</h2>
-    <ul>
-        {% for albara in albarans %}
-            <li>{{ albara.numero_albara }} - {{ albara.client.nom_comercial }} - {{ albara.total }}</li>
-        {% empty %}
-            <li>No hi ha albarans entregats.</li>
-        {% endfor %}
-    </ul>
+{% block title %}Estadístiques - DeliveryHub{% endblock %}
 
-    <h2>Productes mes venuts (ordenats per quantitat)</h2>
-    <ul>
-        {% for producte in productesMesVenuts %}
-            <li>{{ producte.producte__nom }} - {{ producte.quantitat_total }}</li>
-        {% empty %}
-            <li>No hi ha vendes registrades.</li>
-        {% endfor %}
-    </ul>
+{% block content %}
+<div class="pt-20">
+    <!-- Header -->
+    <div class="max-w-7xl mx-auto px-4 mb-12 animate-slide-down">
+        <h1 class="text-5xl font-black gradient-text mb-2">Estadístiques</h1>
+        <p class="text-gray-400">Anàlisi de les teves operacions</p>
+    </div>
 
-    <h2>Grafic de vendes per categoria</h2>
-    {{ grafic|safe }}
+    <div class="max-w-7xl mx-auto px-4 mb-20">
+        <!-- Albarans Entregats -->
+        <div class="mb-12">
+            <h2 class="text-3xl font-bold gradient-text mb-6 animate-slide-up">
+                <i class="fas fa-check-circle text-green-400 mr-2"></i>Albarans Entregats
+            </h2>
 
-    <h2>Ranking de clients per volum de compra</h2>
-    <ul>
-        {% for client in rankingClients %}
-            <li>{{ client.client__nom_comercial }} - {{ client.volum_compra }}</li>
-        {% empty %}
-            <li>No hi ha clients amb compres entregades.</li>
-        {% endfor %}
-    </ul>
-</body>
-</html>
+            {% if albarans %}
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 grid-stagger">
+                    {% for albara in albarans %}
+                        <div class="glass-hover rounded-lg p-4 hover-lift">
+                            <div class="flex justify-between items-start mb-2">
+                                <h4 class="text-lg font-bold text-white">{{ albara.numero_albara }}</h4>
+                                <span class="text-green-400 font-semibold">{{ albara.total }}€</span>
+                            </div>
+                            <p class="text-gray-400 text-sm">{{ albara.client.nom_comercial }}</p>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="glass rounded-lg p-6 text-center">
+                    <p class="text-gray-400">No hi ha albarans entregats</p>
+                </div>
+            {% endif %}
+        </div>
+
+        <!-- Productes Més Venuts -->
+        <div class="mb-12">
+            <h2 class="text-3xl font-bold gradient-text mb-6 animate-slide-up">
+                <i class="fas fa-chart-bar text-cyan-400 mr-2"></i>Productes Més Venuts
+            </h2>
+
+            {% if productesMesVenuts %}
+                <div class="glass-hover rounded-2xl overflow-hidden">
+                    <div class="overflow-x-auto">
+                        <table class="w-full">
+                            <thead class="bg-slate-700/50 border-b border-slate-600/50">
+                                <tr>
+                                    <th class="px-6 py-4 text-left text-sm font-semibold text-white">Producte</th>
+                                    <th class="px-6 py-4 text-right text-sm font-semibold text-white">Quantitat Venuda</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-slate-700/30">
+                                {% for producte in productesMesVenuts %}
+                                    <tr class="hover:bg-slate-700/20 transition">
+                                        <td class="px-6 py-4 text-white font-semibold">{{ producte.producte__nom }}</td>
+                                        <td class="px-6 py-4 text-right text-cyan-400 font-bold">{{ producte.quantitat_total }}</td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            {% else %}
+                <div class="glass rounded-lg p-6 text-center">
+                    <p class="text-gray-400">No hi ha vendes registrades</p>
+                </div>
+            {% endif %}
+        </div>
+
+        <!-- Gràfica de Vendes -->
+        <div class="mb-12">
+            <h2 class="text-3xl font-bold gradient-text mb-6 animate-slide-up">
+                <i class="fas fa-chart-line text-purple-400 mr-2"></i>Gràfica de Vendes per Categoria
+            </h2>
+
+            {% if grafic %}
+                <div class="glass-hover rounded-2xl p-6">
+                    {{ grafic|safe }}
+                </div>
+            {% else %}
+                <div class="glass rounded-lg p-6 text-center">
+                    <p class="text-gray-400">No hi ha dades disponibles</p>
+                </div>
+            {% endif %}
+        </div>
+
+        <!-- Ranking de Clients -->
+        <div class="mb-20">
+            <h2 class="text-3xl font-bold gradient-text mb-6 animate-slide-up">
+                <i class="fas fa-crown text-orange-400 mr-2"></i>Ranking de Clients per Volum de Compra
+            </h2>
+
+            {% if rankingClients %}
+                <div class="space-y-4">
+                    {% for client in rankingClients %}
+                        <div class="glass-hover rounded-lg p-4 hover-lift">
+                            <div class="flex justify-between items-center">
+                                <p class="text-white font-semibold">{{ client.client__nom_comercial }}</p>
+                                <span class="bg-gradient-to-r from-orange-400 to-yellow-400 text-slate-900 px-4 py-2 rounded-lg font-bold">{{ client.volum_compra }}€</span>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="glass rounded-lg p-6 text-center">
+                    <p class="text-gray-400">No hi ha clients amb compres entregades</p>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,21 +1,82 @@
-<!doctype html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Document</title>
-</head>
-<body>
-    <h2>Login</h2>
+{% extends "base.html" %}
 
-    <form method="post">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit">Entrar</button>
-    </form>
+{% block title %}Login - DeliveryHub{% endblock %}
 
-    {% if form.errors %}
-    <p>Usuario o contraseña incorrectos</p>
-    {% endif %}
-</body>
-</html>
+{% block content %}
+<section class="min-h-screen flex items-center justify-center pt-20">
+    <div class="max-w-md w-full">
+        <!-- Header -->
+        <div class="text-center mb-8 animate-slide-down">
+            <h1 class="text-4xl font-black gradient-text mb-2">Inicia Sessió</h1>
+            <p class="text-gray-400">Accedeix a DeliveryHub</p>
+        </div>
+
+        <!-- Form Card -->
+        <div class="glass-hover rounded-2xl p-8 animate-fade-scale">
+            <form method="post">
+                {% csrf_token %}
+                
+                <!-- Username -->
+                <div class="mb-6">
+                    <label class="block text-sm font-semibold mb-2 text-gray-300">Nom d'usuari</label>
+                    {{ form.username }}
+                    {% if form.username.errors %}
+                        <span class="text-red-400 text-sm">{{ form.username.errors.0 }}</span>
+                    {% endif %}
+                </div>
+
+                <!-- Password -->
+                <div class="mb-8">
+                    <label class="block text-sm font-semibold mb-2 text-gray-300">Contrasenya</label>
+                    {{ form.password }}
+                    {% if form.password.errors %}
+                        <span class="text-red-400 text-sm">{{ form.password.errors.0 }}</span>
+                    {% endif %}
+                </div>
+
+                <!-- Error message -->
+                {% if form.errors %}
+                    <div class="bg-red-500/20 border border-red-500/50 rounded-lg p-4 mb-6">
+                        <p class="text-red-400 font-semibold">⚠️ Usuari o contrasenya incorrecta</p>
+                    </div>
+                {% endif %}
+
+                <!-- Submit Button -->
+                <button type="submit" class="btn-primary w-full py-3 rounded-xl font-bold text-lg text-white mb-4 transition">
+                    <i class="fas fa-sign-in-alt mr-2"></i>Entrar
+                </button>
+            </form>
+
+            <!-- Register Link -->
+            <p class="text-center text-gray-400">
+                No tens compte? <a href="{% url 'register' %}" class="text-cyan-400 hover:text-cyan-300 font-semibold transition">Registra't aquí</a>
+            </p>
+        </div>
+    </div>
+</section>
+
+<style>
+    input[type="text"], input[type="password"] {
+        width: 100%;
+        padding: 12px 16px;
+        background: rgba(30, 41, 59, 0.6);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 8px;
+        color: white;
+        font-size: 1rem;
+        transition: all 0.3s ease;
+        margin-bottom: 4px;
+    }
+
+    input[type="text"]:focus, input[type="password"]:focus {
+        outline: none;
+        background: rgba(30, 41, 59, 0.8);
+        border-color: rgba(59, 130, 246, 0.5);
+        box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+    }
+
+    input[type="text"]::placeholder, input[type="password"]::placeholder {
+        color: rgba(255, 255, 255, 0.5);
+    }
+</style>
+{% endblock %}

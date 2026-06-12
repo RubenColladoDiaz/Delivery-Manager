@@ -1,29 +1,76 @@
-<html>
+{% extends "base.html" %}
 
-<head>
-    <meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
-    <title>Canviar Estat Albarà</title>
-</head>
+{% block title %}Canviar Estat - DeliveryHub{% endblock %}
 
-<body>
-    <form action="{% url 'canviarEstatFormulari' albara.id %}" method="post">
-        {% csrf_token %}
+{% block content %}
+<div class="pt-20">
+    <!-- Header -->
+    <div class="max-w-2xl mx-auto px-4 mb-8 animate-slide-down">
+        <h1 class="text-5xl font-black gradient-text mb-2">Canviar Estat</h1>
+        <p class="text-gray-400">Albarà #{{ albara.numero_albara }}</p>
+    </div>
 
-        <fieldset>
-            <legend>Modificar estat a albarà num.{{ albara.numero_albara }}</legend>
+    <!-- Form Card -->
+    <div class="max-w-2xl mx-auto px-4 mb-20">
+        <div class="glass-hover rounded-2xl p-8 animate-fade-scale">
+            <form action="{% url 'canviarEstatFormulari' albara.id %}" method="post">
+                {% csrf_token %}
 
-            <select name="estatSeleccionat">
-                <option value={{albara.estat}}>{{albara.estat}}</option>
-                {% for valor, texto in estats %}
-                <option value="{{ valor }}">
-                    {{ texto }}
-                </option>
-                {% endfor %}
-            </select>
-        </fieldset>
+                <div class="mb-8">
+                    <label class="block text-sm font-semibold mb-4 text-gray-300">Selecciona el nou estat</label>
+                    <select name="estatSeleccionat" required class="form-select w-full">
+                        <option value="{{ albara.estat }}" selected>{{ albara.estat }} (Actual)</option>
+                        {% for valor, texto in estats %}
+                            <option value="{{ valor }}">{{ texto }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
 
-        <input type="submit" value="Canviar estat">
-    </form>
-</body>
+                <!-- Current Status -->
+                <div class="glass rounded-lg p-4 mb-8">
+                    <p class="text-gray-400 text-sm mb-1">Estat Actual</p>
+                    <div class="flex items-center gap-2">
+                        <div class="w-3 h-3 rounded-full {% if albara.estat == 'Pendent' %}bg-yellow-400{% elif albara.estat == 'Entregat' %}bg-green-400{% elif albara.estat == 'Cancel·lat' %}bg-red-400{% else %}bg-blue-400{% endif %}"></div>
+                        <p class="text-white font-semibold text-lg">{{ albara.estat }}</p>
+                    </div>
+                </div>
 
-</html>
+                <!-- Buttons -->
+                <div class="flex gap-4">
+                    <button type="submit" class="flex-1 btn-primary py-3 rounded-xl font-bold text-white transition">
+                        <i class="fas fa-exchange-alt mr-2"></i>Canviar Estat
+                    </button>
+                    <a href="{% url 'detallsAlbara' albara.id %}" class="flex-1 bg-slate-700 hover:bg-slate-600 text-white px-4 py-3 rounded-xl transition text-center font-semibold">
+                        <i class="fas fa-times mr-2"></i>Cancel·lar
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<style>
+    select {
+        width: 100%;
+        padding: 12px 16px;
+        background: rgba(30, 41, 59, 0.6);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 8px;
+        color: white;
+        font-size: 1rem;
+        transition: all 0.3s ease;
+    }
+
+    select:focus {
+        outline: none;
+        background: rgba(30, 41, 59, 0.8);
+        border-color: rgba(59, 130, 246, 0.5);
+        box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+    }
+
+    select option {
+        background-color: #1e293b;
+        color: white;
+    }
+</style>
+{% endblock %}

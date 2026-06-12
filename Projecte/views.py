@@ -13,6 +13,10 @@ from django.contrib import messages
 from django.contrib.auth.forms import UserCreationForm
 
 # Create your views here.
+class Home(View):
+    def get(self, request, *args, **kwargs):
+        return render(request, 'home.html')
+
 class LlistatClients(View):
     def get(self, request, *args, **kwargs):
         clientsActius = Client.objects.filter(actiu=True)
